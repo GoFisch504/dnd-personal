@@ -1,0 +1,29 @@
+import disnake
+from disnake.ext import commands
+import random  # Added missing import
+import os  # Added for environment variable support
+
+bot = commands.Bot(command_prefix="/", intents=disnake.Intents.all())
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user}")
+
+@bot.slash_command(description="Roll a dice.")
+async def roll(inter, dice: str):
+    number, sides = map(int, dice.lower().split('d'))
+    rolls = [random.randint(1, sides) for _ in range(number)]
+    await inter.response.send_message(f"🎲 Rolls: {rolls} (Total: {sum(rolls)})")
+
+@bot.slash_command(description="Start recording (placeholder).")
+async def record(inter):
+    await inter.response.send_message("Recording started! (Feature implementation pending.)")
+
+bot.run(os.getenv("DISCORD_TOKEN"))  # Replaced hardcoded token with environment variable
+
+# Ensure disnake is installed
+try:
+    import disnake
+except ImportError:
+    print("disnake is not installed. Installing...")
+    os.system("pip install disnake")
